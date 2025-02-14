@@ -6,7 +6,7 @@ const ImageUpload = ({
 
   handleFileChange,
 }: {
-  profile: string | null;
+  profile: string;
   handleFileChange: React.ChangeEventHandler<HTMLInputElement>;
 }) => {
   return (
