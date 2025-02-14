@@ -65,15 +65,29 @@ const MainForm = () => {
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>("");
 
+  const [defaultValues, setDefaultValues] = useState({
+    username: "",
+    email: "",
+    ticket: "",
+    numberOfTickets: "1",
+    textArea: "Nil",
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setDefaultValues({
+        username: localStorage.getItem("username") || "",
+        email: localStorage.getItem("email") || "",
+        ticket: localStorage.getItem("ticket") || "",
+        numberOfTickets: localStorage.getItem("numberOfTickets") || "1",
+        textArea: localStorage.getItem("textArea") || "Nil",
+      });
+    }
+  }, []);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: localStorage.getItem("username") || "",
-      email: localStorage.getItem("email") || "",
-      ticket: localStorage.getItem("ticket") || "",
-      numberOfTickets: localStorage.getItem("numberOfTickets") || "1",
-      textArea: localStorage.getItem("textArea") || "Nil",
-    },
+    defaultValues,
   });
 
   useEffect(() => {
