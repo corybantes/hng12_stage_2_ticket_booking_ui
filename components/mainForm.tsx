@@ -27,6 +27,7 @@ import TicketType from "./ticketType";
 import TechemberCard from "./techemberCard";
 import ImageUpload from "./imageUpload";
 import Step3form from "@/components/step3form";
+import { uploadImage } from "@/lib/upload";
 
 const TicketList = [
   {
@@ -112,12 +113,38 @@ const MainForm = () => {
       setStep(step - 1);
     }
   };
-  const handleNext = () => setStep(step + 1);
+
+  const handleNext = () => {
+    setStep(step + 1);
+  };
 
   const handleChange = (value: string, index: number) => {
     setTicketType(value);
     setSelected(index);
     localStorage.setItem("ticket", value);
+  };
+
+  const handleAnotherTicket = () => {
+    form.reset({
+      username: "",
+      email: "",
+      ticket: "",
+      numberOfTickets: "1",
+      textArea: "Nil",
+    });
+
+    // Clear localStorage
+    localStorage.removeItem("username");
+    localStorage.removeItem("email");
+    localStorage.removeItem("ticket");
+    localStorage.removeItem("numberOfTickets");
+    localStorage.removeItem("textArea");
+    localStorage.removeItem("preview");
+
+    // Clear image preview state
+    setPreview("");
+    setImage(null);
+    setStep(1);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,34 +157,25 @@ const MainForm = () => {
     }
   };
 
-  const handleUpload = async () => {
-    if (!image) return alert("Please select an image.");
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!image) {
+      alert("Please select an image before submitting.");
+      return;
+    }
 
-    const reader = new FileReader();
-    reader.readAsDataURL(image);
-    reader.onload = async () => {
-      const base64Image = reader.result;
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: base64Image }),
+    const uploadResponse = await uploadImage(image);
+
+    if ("url" in uploadResponse) {
+      console.log("Image uploaded successfully:", uploadResponse.url);
+      localStorage.setItem("preview", uploadResponse.url);
+
+      console.log({
+        ...values,
+        profileImage: uploadResponse.url,
       });
-
-      const data = await res.json();
-      if (data.url) {
-        alert("Upload successful!");
-        console.log("Image URL:", data.url);
-        setPreview(data.url);
-        localStorage.setItem("preview", data.url);
-      } else {
-        alert("Upload failed.");
-      }
-    };
-  };
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    handleUpload();
-    console.log(values);
+    } else {
+      alert("Image upload failed: " + uploadResponse.message);
+    }
   }
   return (
     <div>
@@ -347,8 +365,7 @@ const MainForm = () => {
                 ticketType={ticketType.toUpperCase()}
                 specialRequest={form.getValues("textArea")}
                 profile={preview}
-                handleTicket={() => setStep(1)}
-                handleDownload={() => setStep(1)}
+                handleTicket={handleAnotherTicket}
               />
             )}
           </form>

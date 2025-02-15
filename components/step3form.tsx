@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useRef } from "react";
+import html2canvas from "html2canvas";
 import Ticket from "./ticket";
 import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
@@ -11,7 +12,6 @@ const Step3form = ({
   specialRequest,
   profile,
   handleTicket,
-  handleDownload,
 }: {
   name: string;
   email: string;
@@ -20,8 +20,20 @@ const Step3form = ({
   specialRequest?: string;
   profile: string;
   handleTicket: React.MouseEventHandler<HTMLButtonElement>;
-  handleDownload: React.MouseEventHandler<HTMLButtonElement>;
 }) => {
+  const formRef = useRef<HTMLDivElement>(null);
+
+  const handleDownload = async () => {
+    if (formRef.current) {
+      const canvas = await html2canvas(formRef.current);
+      const image = canvas.toDataURL("image/png");
+
+      const link = document.createElement("a");
+      link.href = image;
+      link.download = "ticket.png";
+      link.click();
+    }
+  };
   return (
     <div className="bg-form-bg border border-form-bd p-6 md:p-12 rounded-3xl text-white">
       <div className="mb-8">
@@ -48,6 +60,7 @@ const Step3form = ({
             ticketType={ticketType}
             specialRequest={specialRequest}
             profile={profile}
+            formRef={formRef}
           />
           {/* <div>seperator</div> */}
         </div>

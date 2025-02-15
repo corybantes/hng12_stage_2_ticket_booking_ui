@@ -9,6 +9,7 @@ const Ticket = ({
   ticketNumber,
   specialRequest,
   profile,
+  formRef,
 }: {
   name: string;
   email: string;
@@ -16,9 +17,13 @@ const Ticket = ({
   ticketNumber: number;
   specialRequest?: string;
   profile: string;
+  formRef: React.Ref<HTMLDivElement>;
 }) => {
   return (
-    <div className="relative w-[300px] h-[600px] bg-ticket-pattern bg-no-repeat bg-cover bg-center rounded-[16px] p-[14px] flex justify-center">
+    <div
+      className="relative w-[300px] h-[600px] bg-ticket-pattern bg-no-repeat bg-cover bg-center rounded-[16px] p-[14px] flex justify-center"
+      ref={formRef}
+    >
       <div className="w-[260px] h-[446px] bg-transparent border border-ticket-bd rounded-[16px] p-[14px] flex flex-col">
         <div className="text-center">
           <h1 className="font-[roadRage] text-[34px] leading-snug font-normal">
@@ -42,12 +47,14 @@ const Ticket = ({
           </div>
         </div>
         <div className="relative w-[140px] h-[140px] self-center bg-image-empty my-4 p-6 rounded-[32px] border-4 border-image-empty_bd/50">
-          <Image
-            src={profile}
-            alt="profile picture"
-            fill
-            className="object-cover rounded-[27px]"
-          />
+          {profile ? (
+            <Image
+              src={profile}
+              alt="profile picture"
+              fill
+              className="object-cover rounded-[27px]"
+            />
+          ) : null}
         </div>
         <div className="bg-ticket-sub_bg border border-ticket-sub_bd rounded-lg p-1">
           <div className="flex flex-col">

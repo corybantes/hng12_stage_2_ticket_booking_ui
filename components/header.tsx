@@ -9,7 +9,7 @@ import Image from "next/image";
 const Header = () => {
   return (
     <div
-      className={` bg-header-bg border border-header-bd rounded-[12px] md:rounded-[24px] px-4 py-3 font-[jeju] text-header-text flex justify-between text-lg items-center`}
+      className={`w-[90%] mx-auto bg-header-bg border border-header-bd rounded-[12px] md:rounded-[24px] px-4 py-3 font-[jeju] text-header-text flex justify-between text-lg items-center`}
     >
       <Logo />
       <Navbar />
